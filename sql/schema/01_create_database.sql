@@ -1,0 +1,2 @@
+CREATE DATABASE mun_data
+    WITH ENCODING = 'UTF8';
