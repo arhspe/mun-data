@@ -2,7 +2,7 @@
 
 Análise da **população residente por cor ou raça nos municípios brasileiros (Censo Demográfico 2022)**, a partir da **Tabela 9605 do IBGE (SIDRA)**.  
 
-O projeto cobre todo o pipeline de dados: **importação → tratamento → modelagem relacional → validação → análises → visualizações**, com foco em boas práticas de **organização, reprodutibilidade e transparência metodológica**.
+O projeto cobre todo o pipeline de dados — da importação à visualização — com foco em boas práticas de organização, reprodutibilidade e transparência metodológica.
 
 ---
 
@@ -85,6 +85,7 @@ sql/validation/selects_validation.sql
 ---
 
 ## 📊 Análises realizadas
+> *As visualizações foram geradas em Python (pandas + matplotlib) a partir das consultas SQL.*
 
 ### 1️. Grupo racial dominante
 
@@ -100,7 +101,9 @@ sql/analyses/grupo_racial_dominante_uf.sql
 
 📈 Exemplo de visualização:
 
-![Grupo racial dominante por UF](outputs/figures/grupo_dominante_uf.png)
+<p align="center">
+  <img src="outputs/figures/grupo_dominante_uf.png" width="55%">
+</p>
 
 ---
 
@@ -113,9 +116,13 @@ sql/analyses/diversidade_racial.sql
 ```
 📈 Exemplo de visualização:
 
-![Diversidade média por UF](outputs/figures/diversidade_media_uf.png)
+<p align="center">
+  <img src="outputs/figures/diversidade_media_uf.png" width="55%">
+</p>
 
-![Top 10 Municípios com maior diversidade racial](outputs/figures/diversidade_top10.png)
+<p align="center">
+  <img src="outputs/figures/diversidade_top10.png" width="55%">
+</p>
 
 ---
 
@@ -128,7 +135,35 @@ sql/analyses/concentracao_racial.sql
 ```
 📈 Exemplo de visualização:
 
-![Municípios com maior concentração racial](outputs/figures/concentracao_racial_top10.png)
+<p align="center">
+  <img src="outputs/figures/concentracao_racial_top10.png" width="55%">
+</p>
+
+---
+
+### 🗺️ Análise final e principais insights regionais
+
+As análises do Censo Demográfico 2022 (IBGE – Tabela 9605) evidenciam diferenças marcantes na composição racial entre as regiões do Brasil: 
+
+#### **🌴 Norte e Nordeste** 
+
+Apresentam, em média, **maior diversidade racial**, com menor concentração em um único grupo e maior equilíbrio entre as categorias raciais em diversos municípios. Essas regiões concentram muitos dos municípios com **índices elevados de diversidade**. 
+
+#### **🏙️ Sudeste** 
+
+Exibe um perfil **heterogêneo**, combinando municípios altamente diversos — sobretudo em áreas urbanas — com outros de **alta concentração racial**, especialmente fora dos grandes centros. 
+
+**🌾 Centro-Oeste** 
+
+Mostra **padrões intermediários**, com diversidade moderada e variações relevantes entre municípios, influenciadas por **processos recentes de ocupação e migração interna**. 
+
+#### **❄️ Sul** 
+
+Destaca-se pela **menor diversidade média** e por **elevados níveis de concentração racial**, refletindo um padrão mais homogêneo em grande parte dos municípios da região. 
+
+### 🧭 Síntese 
+
+Em conjunto, os dados revelam um país marcado por fortes contrastes regionais, reforçando a importância da análise em escala municipal para compreender a complexidade demográfica brasileira. As análises são descritivas, seguem as notas metodológicas do IBGE e foram validadas para garantir consistência e reprodutibilidade.
 
 ---
 
@@ -145,5 +180,3 @@ sql/analyses/concentracao_racial.sql
 
 - **Dicionário de dados:** `docs/dicionario_dados.md`
 - **Metodologia e notas do IBGE:** `docs/metodologia.md`
-
-📌 *Projeto com fins educacionais, analíticos e de portfólio.*
