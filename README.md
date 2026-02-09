@@ -1,8 +1,15 @@
 # Banco de Dados mun_data
+![GitHub last commit](https://img.shields.io/github/last-commit/arhspe/mun-data)
+![Status](https://img.shields.io/badge/status-completo-brightgreen)
+![License](https://img.shields.io/github/license/arhspe/mun-data)
+<br>
+![Database](https://img.shields.io/badge/Database-PostgreSQL-blue)
+![Pipeline](https://img.shields.io/badge/Pipeline-ETL%2FELT-blueviolet)
+![Data Source](https://img.shields.io/badge/Data%20Source-IBGE%20SIDRA-0a66c2)
 
-Análise da **população residente por cor ou raça nos municípios brasileiros (Censo Demográfico 2022)**, a partir da **Tabela 9605 do IBGE (SIDRA)**.  
+Banco de dados analítico desenvolvido para investigar a **composição racial da população residente nos municípios brasileiros**, com base no **Censo Demográfico de 2022** e na **Tabela 9605 do IBGE (SIDRA)**.
 
-O projeto cobre todo o pipeline de dados — da importação à visualização — com foco em boas práticas de organização, reprodutibilidade e transparência metodológica.
+O projeto implementa um pipeline completo de dados — da ingestão à análise — com foco em **modelagem relacional**, **validação metodológica**, **reprodutibilidade** e **transparência analítica**.
 
 ---
 
@@ -19,8 +26,16 @@ O projeto cobre todo o pipeline de dados — da importação à visualização �
   - Amarela
   - Parda
   - Indígena
+  
+#### Considerações metodológicas
 
-> Notas metodológicas importantes do IBGE (ex.: definição de população indígena, valores inibidos, ausentes ou zerados) foram consideradas durante a validação e análises.
+Durante o processo de validação e análise foram consideradas as notas técnicas oficiais do IBGE, incluindo:
+
+- critérios de autodeclaração racial
+- definições específicas de população indígena
+- presença de valores inibidos, ausentes ou zerados
+
+> _Notas metodológicas importantes do IBGE (ex.: definição de população indígena, valores inibidos, ausentes ou zerados) foram consideradas durante a validação e análises._
 
 ---
 
@@ -65,7 +80,7 @@ O banco foi modelado de forma **normalizada**, separando **informações territo
 - **mun_info:** código IBGE, nome do município e UF
 - **mun_pop:** totais populacionais por grupo racial
 
-A relação entre as tabelas é feita via `muncod_ibge`.
+A relação entre as tabelas é feita via `muncod_ibge`
 
 ---
 
@@ -77,29 +92,27 @@ Foram implementadas checagens de consistência, incluindo:
 - Identificação de discrepâncias explicáveis pelas notas do IBGE
 - Criação de **flag de alerta** para municípios com diferenças relevantes
 
-As validações estão documentadas em:
+As validações estão documentadas em `sql/validation/selects_validation.sql`
 
-```text
-sql/validation/selects_validation.sql
-```
 ---
 
 ## 📊 Análises realizadas
+
+As análises apresentadas a seguir têm caráter demonstrativo e exploratório, com o objetivo de evidenciar o potencial analítico da base estruturada.
+
+A modelagem relacional e as validações implementadas permitem a construção de diversas outras abordagens analíticas — como estudos temporais (em expansões futuras), análises comparativas regionais, correlações socioeconômicas e indicadores compostos.
+
+Como exemplos iniciais, foram desenvolvidas análises que destacam padrões de distribuição racial, níveis de diversidade e graus de concentração populacional, por apresentarem forte capacidade de revelar contrastes territoriais no contexto demográfico brasileiro.
+
 > *As visualizações foram geradas em Python (pandas + matplotlib) a partir das consultas SQL.*
 
 ### 1️. Grupo racial dominante
 
-- **Por município**
 - **Por UF**
 
 SQL:
 
-```text
-sql/analyses/grupo_racial_dominante_mun.sql
-sql/analyses/grupo_racial_dominante_uf.sql
-```
-
-📈 Exemplo de visualização:
+`sql/analyses/grupo_racial_dominante_mun.sql` e `sql/analyses/grupo_racial_dominante_uf.sql`
 
 <p align="center">
   <img src="outputs/figures/grupo_dominante_uf.png" width="55%">
@@ -109,12 +122,12 @@ sql/analyses/grupo_racial_dominante_uf.sql
 
 ### 2️. Índice de diversidade racial
 
+- **Por município**
+- **Por UF**
+  
 SQL:
 
-```text
-sql/analyses/diversidade_racial.sql
-```
-📈 Exemplo de visualização:
+`sql/analyses/diversidade_racial.sql`
 
 <p align="center">
   <img src="outputs/figures/diversidade_media_uf.png" width="55%">
@@ -128,12 +141,11 @@ sql/analyses/diversidade_racial.sql
 
 ### 3. Concentração racial
 
+- **Por município**
+
 SQL:
 
-```text
-sql/analyses/concentracao_racial.sql
-```
-📈 Exemplo de visualização:
+`sql/analyses/concentracao_racial.sql`
 
 <p align="center">
   <img src="outputs/figures/concentracao_racial_top10.png" width="55%">
@@ -141,29 +153,32 @@ sql/analyses/concentracao_racial.sql
 
 ---
 
-### 🗺️ Análise final e principais insights regionais
+## 🗺️ Análise final e principais insights regionais
 
-As análises do Censo Demográfico 2022 (IBGE – Tabela 9605) evidenciam diferenças marcantes na composição racial entre as regiões do Brasil: 
+A síntese a seguir apresenta interpretações descritivas baseadas nos indicadores analíticos construídos a partir da Tabela 9605 do Censo Demográfico 2022 (IBGE), especialmente métricas de **diversidade racial**, **concentração populacional** e **grupo racial predominante** em escala municipal.
 
-#### **🌴 Norte e Nordeste** 
+### 🟢 Norte e Nordeste
 
-Apresentam, em média, **maior diversidade racial**, com menor concentração em um único grupo e maior equilíbrio entre as categorias raciais em diversos municípios. Essas regiões concentram muitos dos municípios com **índices elevados de diversidade**. 
+Os indicadores de diversidade racial apontam, em média, maior heterogeneidade populacional nessas regiões, com menor predominância de um único grupo racial em diversos municípios. Observa-se maior frequência de municípios com índices elevados de diversidade quando comparados ao restante do país.
 
-#### **🏙️ Sudeste** 
+### 🟡 Sudeste
 
-Exibe um perfil **heterogêneo**, combinando municípios altamente diversos — sobretudo em áreas urbanas — com outros de **alta concentração racial**, especialmente fora dos grandes centros. 
+Apresenta elevada variabilidade interna. Municípios de grande porte tendem a demonstrar maior diversidade racial, enquanto áreas fora dos principais centros urbanos evidenciam padrões mais concentrados, sugerindo heterogeneidade regional significativa.
 
-**🌾 Centro-Oeste** 
+### 🟠 Centro-Oeste
 
-Mostra **padrões intermediários**, com diversidade moderada e variações relevantes entre municípios, influenciadas por **processos recentes de ocupação e migração interna**. 
+Os resultados indicam padrões intermediários de diversidade e concentração racial. Observa-se variação relevante entre municípios, possivelmente associada a dinâmicas recentes de ocupação territorial e fluxos migratórios internos.
 
-#### **❄️ Sul** 
+### 🔵 Sul
 
-Destaca-se pela **menor diversidade média** e por **elevados níveis de concentração racial**, refletindo um padrão mais homogêneo em grande parte dos municípios da região. 
+Os indicadores apontam menor diversidade média e maior concentração populacional em grupos raciais específicos em comparação com outras regiões, indicando maior homogeneidade demográfica relativa em parte dos municípios analisados.
 
-### 🧭 Síntese 
+### Síntese geral
 
-Em conjunto, os dados revelam um país marcado por fortes contrastes regionais, reforçando a importância da análise em escala municipal para compreender a complexidade demográfica brasileira. As análises são descritivas, seguem as notas metodológicas do IBGE e foram validadas para garantir consistência e reprodutibilidade.
+Os indicadores construídos evidenciam diferenças regionais consistentes na composição racial municipal. A análise reforça a importância de abordagens em escala local para compreensão da diversidade demográfica brasileira.
+
+As interpretações apresentadas possuem caráter descritivo, seguem as notas metodológicas oficiais do IBGE e baseiam-se em dados previamente validados para garantir consistência analítica e reprodutibilidade.
+
 
 ---
 
