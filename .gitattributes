@@ -1,8 +1,11 @@
 *.sql linguist-language=SQL
 
-data/* linguist-vendored
-outputs/* linguist-vendored
-figures/* linguist-generated
+scripts/*.py linguist-vendored
+
+data/** linguist-generated
+outputs/** linguist-generated
+figures/** linguist-generated
+
 *.csv linguist-generated
 *.png linguist-generated
 *.jpg linguist-generated
