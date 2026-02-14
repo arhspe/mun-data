@@ -1,4 +1,4 @@
-# Metodologia – Projeto mun_data
+# Metodologia – Banco mun_data
 
 Este documento descreve as etapas metodológicas adotadas na extração,
 estruturação, tratamento, validação e análise dos dados do projeto `mun_data`.
@@ -57,7 +57,7 @@ preservar a maior granularidade possível.
 ## 2. Estruturação dos dados
 
 Os dados originais foram inicialmente armazenados na camada `raw`,
-preservando sua forma original.
+preservando integralmente sua estrutura e conteúdo originais.
 
 Após o tratamento, os dados foram normalizados em duas tabelas principais:
 
@@ -83,8 +83,6 @@ Conforme a legenda oficial do IBGE, os seguintes símbolos foram tratados:
 | `..` | Importado como `NULL` |
 | `...` | Importado como `NULL` |
 | `0` | Mantido como zero numérico |
-
-Essa decisão preserva a fidelidade metodológica e evita inferências indevidas.
 
 ---
 
