@@ -59,10 +59,14 @@ Armazena dados populacionais por município, segundo cor ou raça.
 | pop_amarela | INTEGER | População de cor ou raça amarela |
 | pop_parda | INTEGER | População de cor ou raça parda |
 | pop_indigena | INTEGER | População indígena |
+| flag_discrepancia| BOOLEAN  | Indica divergência entre `pop_total` e a soma das populações por cor ou raça |
 
 **Observações**
 - Valores especiais da legenda do IBGE (`-`, `X`, `..`, `...`) foram
   importados como `NULL`.
+- `muncod_ibge` referencia `mun_info(muncod_ibge)`.
+- A coluna `flag_discrepancia` é utilizada para controle de qualidade dos dados,
+  sinalizando inconsistências entre o total informado e a soma das categorias.
 - A soma das populações por cor ou raça pode diferir da população total,
   conforme as definições metodológicas do IBGE, especialmente nos casos
   relacionados à população indígena.
