@@ -1,41 +1,39 @@
 # Banco de Dados mun_data
-![GitHub last commit](https://img.shields.io/github/last-commit/arhspe/mun-data)
-![Status](https://img.shields.io/badge/status-completo-brightgreen)
-![License](https://img.shields.io/github/license/arhspe/mun-data)
+![Coverage](https://img.shields.io/badge/Coverage-National%20(5.570%20mun)-3b82f6?logo=map&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-3b82f6)
 <br>
-![Database](https://img.shields.io/badge/Database-PostgreSQL-blue)
-![Pipeline](https://img.shields.io/badge/Pipeline-ETL%2FELT-blueviolet)
-![Data Source](https://img.shields.io/badge/Data%20Source-IBGE%20SIDRA-0a66c2)
+![DB Engine](https://img.shields.io/badge/DBMS-PostgreSQL-3b82f6?logo=postgresql&logoColor=white)
+![Primary Key](https://img.shields.io/badge/Primary%20Key-IBGE%20Code-3b82f6?logo=key&logoColor=white)
+![Data Source](https://img.shields.io/badge/Data%20Source-IBGE%20SIDRA-3b82f6?logo=databricks&logoColor=white)
 
-Banco de dados analítico desenvolvido para investigar a **composição racial da população residente nos municípios brasileiros**, com base no **Censo Demográfico de 2022** e na **Tabela 9605 do IBGE (SIDRA)**.
+O `mun_data` é um **banco de dados relacional** desenvolvido para fornecer uma **base cadastral consistente de municípios brasileiros**, a partir dos dados oficiais do Censo Demográfico 2022 do IBGE.
 
-O projeto implementa um pipeline completo de dados — da ingestão à análise — com foco em **modelagem relacional**, **validação metodológica**, **reprodutibilidade** e **transparência analítica**.
+Este repositório concentra-se exclusivamente na estrutura do banco e nos processos de importação e validação, servindo como fundação para análises demográficas e projetos analíticos derivados.
 
+> 📊 As análises, tabelas populacionais e visualizações baseadas neste banco estão disponíveis no repositório complementar `mun-data-tables`.
 ---
 
 ## 📌 Fonte dos dados
 
 - **IBGE – SIDRA**
-- **Tabela 9605** – População residente, por cor ou raça
 - **Ano:** 2022 (atualização em 22/12/2023)
 - **Unidade territorial:** Municípios (5.570)
-- **Variáveis:**
-  - Total
-  - Branca
-  - Preta
-  - Amarela
-  - Parda
-  - Indígena
-  
-#### Considerações metodológicas
+- **Cobertura:** nacional completa
 
-Durante o processo de validação e análise foram consideradas as notas técnicas oficiais do IBGE, incluindo:
+As notas metodológicas oficiais do IBGE foram consideradas durante o processo de importação e validação, especialmente no que se refere a valores ausentes, inibidos e definições específicas de população.  
 
-- critérios de autodeclaração racial
-- definições específicas de população indígena
-- presença de valores inibidos, ausentes ou zerados
+---
 
-> _Notas metodológicas importantes do IBGE (ex.: definição de população indígena, valores inibidos, ausentes ou zerados) foram consideradas durante a validação e análises._
+## 🧱 Escopo do banco de dados
+
+O escopo deste repositório é deliberadamente restrito à camada estrutural do banco de dados, contemplando:
+
+- definição do schema
+- criação da tabela `mun_info`
+- importação dos dados cadastrais
+- validação de consistência e integridade
+
+Análises estatísticas, métricas derivadas e interpretações analíticas não fazem parte deste repositório.
 
 ---
 
@@ -47,138 +45,47 @@ mun_data/
 ├── data/
 │   ├── raw/              # Dados originais do IBGE (sem alterações)
 │   │   └── 9605.csv
-│   └── curated/          # Dados tratados e normalizados
-│       ├── 9605mun_info.csv
-│       └── 9605mun_pop.csv
+│   └── curated/          # Dados tratados para carga da tabela core
+│       └── 9605mun_info.csv
 │
 ├── docs/
-│   ├── dicionario_dados.md
-│   └── metodologia.md
+│   ├── data_dictionary.md
+│   └── methodology.md
 │
 ├── sql/
-│   ├── schema/           # Criação e alteração do banco
-│   ├── import/           # Importação dos CSVs
-│   ├── validation/       # Checagens de consistência
-│   ├── views/            # Views analíticas
-│   └── analyses/         # Consultas analíticas finais
+│   ├── schema/           # Criação do schema e tabelas
+│   ├── import/           # Importação dos dados
+│   └── validation/       # Validações de consistência
 │
-├── outputs/
-│   ├── tables/           # Resultados em CSV
-│   └── figures/          # Gráficos usados no README
-│
-├── scripts/
-│   └── make_figures.py   # Geração automática dos gráficos
-│
+├── LICENSE.md
 └── README.md
 ```
 ---
 
-## 🧱 Modelagem de dados
+## 🧱 Tabela principal do Banco: `mun_info` 
 
-O banco foi modelado de forma **normalizada**, separando **informações territoriais** e **dados populacionais**:
+A tabela `mun_info` armazena informações cadastrais e estruturais dos municípios e atua como **dimensão principal do banco de dados**.
 
-- **mun_info:** código IBGE, nome do município e UF
-- **mun_pop:** totais populacionais por grupo racial
+Ela é independente de qualquer variável estatística específica e foi projetada para servir como base de relacionamento para tabelas populacionais e analíticas em outros repositórios.
 
-A relação entre as tabelas é feita via `muncod_ibge`
+### Campos principais ###
+
+- Código oficial do município (IBGE)
+- Nome do município
+- Unidade da Federação (UF)
+
+O código IBGE `(muncod_ibge)` é utilizado como chave lógica natural, garantindo compatibilidade com bases oficiais e expansões futuras.
 
 ---
 
 ## 🔎 Validação dos dados
 
-Foram implementadas checagens de consistência, incluindo:
+Foram implementadas queries de validação específicas para a tabela `mun_info`, com foco em garantir a qualidade da base cadastral municipal, incluindo:
 
-- Comparação entre `pop_total` e a soma dos grupos raciais
-- Identificação de discrepâncias explicáveis pelas notas do IBGE
-- Criação de **flag de alerta** para municípios com diferenças relevantes
-
-As validações estão documentadas em `sql/validation/selects_validation.sql`
-
----
-
-## 📊 Análises realizadas
-
-As análises apresentadas a seguir têm caráter demonstrativo e exploratório, com o objetivo de evidenciar o potencial analítico da base estruturada.
-
-A modelagem relacional e as validações implementadas permitem a construção de diversas outras abordagens analíticas — como estudos temporais (em expansões futuras), análises comparativas regionais, correlações socioeconômicas e indicadores compostos.
-
-Como exemplos iniciais, foram desenvolvidas análises que destacam padrões de distribuição racial, níveis de diversidade e graus de concentração populacional, por apresentarem forte capacidade de revelar contrastes territoriais no contexto demográfico brasileiro.
-
-> *As visualizações foram geradas em Python (pandas + matplotlib) a partir das consultas SQL.*
-
-### 1️. Grupo racial dominante
-
-- **Por UF**
-
-SQL:
-
-`sql/analyses/grupo_racial_dominante_mun.sql` e `sql/analyses/grupo_racial_dominante_uf.sql`
-
-<p align="center">
-  <img src="outputs/figures/grupo_dominante_uf.png" width="55%">
-</p>
-
----
-
-### 2️. Índice de diversidade racial
-
-- **Por município**
-- **Por UF**
-  
-SQL:
-
-`sql/analyses/diversidade_racial.sql`
-
-<p align="center">
-  <img src="outputs/figures/diversidade_media_uf.png" width="55%">
-</p>
-
-<p align="center">
-  <img src="outputs/figures/diversidade_top10.png" width="55%">
-</p>
-
----
-
-### 3. Concentração racial
-
-- **Por município**
-
-SQL:
-
-`sql/analyses/concentracao_racial.sql`
-
-<p align="center">
-  <img src="outputs/figures/concentracao_racial_top10.png" width="55%">
-</p>
-
----
-
-## 🗺️ Análise final e principais insights regionais
-
-A síntese a seguir apresenta interpretações descritivas baseadas nos indicadores analíticos construídos a partir da Tabela 9605 do Censo Demográfico 2022 (IBGE), especialmente métricas de **diversidade racial**, **concentração populacional** e **grupo racial predominante** em escala municipal.
-
-### 🟢 Norte e Nordeste
-
-Os indicadores de diversidade racial apontam, em média, maior heterogeneidade populacional nessas regiões, com menor predominância de um único grupo racial em diversos municípios. Observa-se maior frequência de municípios com índices elevados de diversidade quando comparados ao restante do país.
-
-### 🟡 Sudeste
-
-Apresenta elevada variabilidade interna. Municípios de grande porte tendem a demonstrar maior diversidade racial, enquanto áreas fora dos principais centros urbanos evidenciam padrões mais concentrados, sugerindo heterogeneidade regional significativa.
-
-### 🟠 Centro-Oeste
-
-Os resultados indicam padrões intermediários de diversidade e concentração racial. Observa-se variação relevante entre municípios, possivelmente associada a dinâmicas recentes de ocupação territorial e fluxos migratórios internos.
-
-### 🔵 Sul
-
-Os indicadores apontam menor diversidade média e maior concentração populacional em grupos raciais específicos em comparação com outras regiões, indicando maior homogeneidade demográfica relativa em parte dos municípios analisados.
-
-### Síntese geral
-
-Os indicadores construídos evidenciam diferenças regionais consistentes na composição racial municipal. A análise reforça a importância de abordagens em escala local para compreensão da diversidade demográfica brasileira.
-
-As interpretações apresentadas possuem caráter descritivo, seguem as notas metodológicas oficiais do IBGE e baseiam-se em dados previamente validados para garantir consistência analítica e reprodutibilidade.
-
+- contagem esperada de municípios
+- unicidade do código IBGE
+- verificação de campos nulos ou vazios
+- validação de formatos básicos (UF e código IBGE)
 
 ---
 
@@ -186,12 +93,17 @@ As interpretações apresentadas possuem caráter descritivo, seguem as notas me
 
 - **PostgreSQL** – modelagem, validação e análises
 - **SQL** – consultas analíticas e views
-- **Python (pandas + matplotlib)** – geração de gráficos
 - **Git/GitHub** – versionamento e organização do projeto
 
 ---
 
 ## 📎 Documentação adicional
 
-- **Dicionário de dados:** `docs/dicionario_dados.md`
-- **Metodologia e notas do IBGE:** `docs/metodologia.md`
+- **Dicionário de dados:** `docs/data_dictionary.md`
+- **Metodologia:** `docs/methodology.md`
+
+---
+
+## 🔗 Repositório complementar
+
+Para consultas analíticas, tabelas populacionais derivadas e visualizações: `mun-data-tables`.
